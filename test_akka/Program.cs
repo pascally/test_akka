@@ -16,13 +16,16 @@ namespace test_akka
             Props consoleWriterProps = Props.Create<ConsoleWriterActor>();
             IActorRef consoleWriterActor = myActorSystem.ActorOf(consoleWriterProps, "consoleWriterActor");
 
-            Props validationActorProps = Props.Create(
-                () => new ValidationActor(consoleWriterActor));
-            IActorRef validationActor = myActorSystem.ActorOf(validationActorProps, "validationActor");
+            // make tailCoordinatorActor
+            Props tailCoordinatorProps = Props.Create(() => new TailCoordinatorActor());
+            IActorRef tailCoordinatorActor = myActorSystem.ActorOf(tailCoordinatorProps, "tailCoordinatorActor");
+
+            // pass tailCoordinatorActor to fileValidatorActorProps (just adding one extra arg)
+            Props fileValidatorActorProps = Props.Create(() => new FileValidatorActor(consoleWriterActor, tailCoordinatorActor));
+            IActorRef validationActor = myActorSystem.ActorOf(fileValidatorActorProps, "validationActor");
 
             Props consoleReaderProps = Props.Create<ConsoleReaderActor>(validationActor);
             IActorRef consoleReaderActor = myActorSystem.ActorOf(consoleReaderProps, "consoleReaderActor");
-
             consoleReaderActor.Tell(ConsoleReaderActor.StartCommand);
 
             Console.WriteLine("Type 'exit' to quit this application at any time.\n");
