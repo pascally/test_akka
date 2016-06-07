@@ -21,10 +21,10 @@ namespace test_akka
             IActorRef tailCoordinatorActor = myActorSystem.ActorOf(tailCoordinatorProps, "tailCoordinatorActor");
 
             // pass tailCoordinatorActor to fileValidatorActorProps (just adding one extra arg)
-            Props fileValidatorActorProps = Props.Create(() => new FileValidatorActor(consoleWriterActor, tailCoordinatorActor));
+            Props fileValidatorActorProps = Props.Create(() => new FileValidatorActor(consoleWriterActor));
             IActorRef validationActor = myActorSystem.ActorOf(fileValidatorActorProps, "validationActor");
 
-            Props consoleReaderProps = Props.Create<ConsoleReaderActor>(validationActor);
+            Props consoleReaderProps = Props.Create<ConsoleReaderActor>();
             IActorRef consoleReaderActor = myActorSystem.ActorOf(consoleReaderProps, "consoleReaderActor");
             consoleReaderActor.Tell(ConsoleReaderActor.StartCommand);
 
